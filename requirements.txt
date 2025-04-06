@@ -1,0 +1,6 @@
+newspaper3k
+requests
+requests-html
+lxml
+#pip install langchain langchain-google-genai google-generativeai
+zappa

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Article Summarizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📰 Article Summarizer</h1>
+        <form id="summarize-form">
+            <input type="url" id="url-input" placeholder="Enter article URL..." required>
+            <button type="submit">Summarize</button>
+        </form>
+        <div id="result-section" class="hidden">
+            <h2>Summary</h2>
+            <p id="summary-text"></p>
+            <a id="download-link" href="#" download>⬇️ Download Extracted Content</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("summarize-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const urlInput = document.getElementById("url-input").value;
+            const resultSection = document.getElementById("result-section");
+            const summaryText = document.getElementById("summary-text");
+            const downloadLink = document.getElementById("download-link");
+
+            resultSection.classList.add("hidden");
+
+            try {
+                const response = await fetch("/summarize", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ url: urlInput }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    summaryText.textContent = data.summary;
+                    downloadLink.href = data.download_url;
+                    resultSection.classList.remove("hidden");
+                } else {
+                    alert(data.error || "Something went wrong");
+                }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        });
+    </script>
+</body>
+</html>
